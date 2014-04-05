@@ -1,0 +1,12 @@
+# python
+*.pyc
+
+# virtualenv directories
+bin
+include
+lib
+lib64
+
+# vim
+*~
+
