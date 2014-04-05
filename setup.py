@@ -1,0 +1,21 @@
+#! /usr/bin/env python
+
+from setuptools import setup, find_packages
+
+setup(
+    name="chest",
+    version="0.1.0_0",
+
+    author='James Elford',
+    author_email='james.p.elford@gmail.com',
+    description='A web service for storing and serving arbitrary data series',
+    license='BSD 3-clause',
+
+    packages=find_packages("src"),
+
+    install_requires = [
+        'tornado>=3.2',
+    ]
+
+    
+)
