@@ -3,7 +3,7 @@
 import tornado.ioloop
 import tornado.web
 
-class DataEndpointHandler(object):
+class DataEndpointHandler(tornado.web.RequestHandler):
     def get(self):
         self.write('Hello, world')
 
