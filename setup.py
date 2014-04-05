@@ -13,10 +13,18 @@ setup(
 
     packages=find_packages("src"),
     package_dir={'': 'src'},
+    package_data = {
+        '': '*.html'
+    },
 
     install_requires = [
         'tornado>=3.2',
-    ]
+    ],
 
+    test_suite = 'test.integration',
+
+    tests_require = [
+        'requests>=2.2'
+    ]
     
 )
