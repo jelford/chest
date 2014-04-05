@@ -8,10 +8,7 @@ import subprocess
 import unittest
 import testtypes
 
-def install_project(destination_directory, project_root_dir):
-    subprocess.check_call(['virtualenv', destination_directory])
-    installation_command = '. bin/activate; pip install {project_root_dir}'.format(**locals())
-    subprocess.check_call(installation_command, shell=True, cwd=destination_directory)
+from servertools import install_project
 
 class TestInstallation(testtypes.TempDirTestCase):
     def test_installation(self):
