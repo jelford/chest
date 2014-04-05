@@ -12,6 +12,7 @@ setup(
     license='BSD 3-clause',
 
     packages=find_packages("src"),
+    package_dir={'': 'src'},
 
     install_requires = [
         'tornado>=3.2',

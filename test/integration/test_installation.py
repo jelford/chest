@@ -17,13 +17,13 @@ def install_project(destination_directory, project_root_dir):
 class TestInstallation(unittest.TestCase):
     def setUp(self):
         self.project_root_dir = _project_root_dir
-        self.temp_dir = mkdtemp('_chest')
+        self.working_dir = mkdtemp('_chest')
 
     def test_installation(self):
-        install_project(self.temp_dir, self.project_root_dir)
+        install_project(self.working_dir, self.project_root_dir)
         
     def tearDown(self):
-        shutil.rmtree(self.temp_dir)
+        shutil.rmtree(self.working_dir)
 
 if __name__ == '__main__':
     unittest.main()
