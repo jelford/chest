@@ -1,5 +1,7 @@
 # python
 *.pyc
+*.egg
+*.egg-info
 
 # virtualenv directories
 bin
@@ -10,3 +12,4 @@ lib64
 # vim
 *~
 *.swp
+
