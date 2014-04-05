@@ -1,6 +1,8 @@
 
 import subprocess
 from python_client import Python
+import requests
+import json
 
 def install_project(destination_directory, project_root_dir):
     subprocess.check_call(['virtualenv', destination_directory])
@@ -24,3 +26,11 @@ def start_server(base_dir):
     return _throw_if_fails_within(seconds=2, 
                 process=Python(base_dir).start_module('chest.start'))
 
+class HttpRequestMaker(object):
+    def post(self, path, data):
+        r = requests.post('http://localhost:5805/' + path, data=json.dumps(data))
+        return r
+
+    def get(self, path):
+        r = requests.get('http://localhost:5805/' + path)
+        return r

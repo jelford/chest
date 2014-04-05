@@ -6,8 +6,9 @@ import tornado.template
 
 import json
 from collections import defaultdict
+from pkg_resources import resource_filename
 
-
+template_loader = tornado.template.Loader(resource_filename(__name__, 'resources'))
 
 all_data = defaultdict(list)
 
@@ -26,9 +27,9 @@ class DataEndpointHandler(tornado.web.RequestHandler):
         self.finish()
 
 class ChartEndpointHandler(tornado.web.RequestHandler):
-    
     def get(self, series_name):
-        
+        self.write(template_loader.load('chart.html').generate(gubby="the_gubby"))
+        self.finish()
         
 
 application = tornado.web.Application([
