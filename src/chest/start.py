@@ -7,6 +7,7 @@ import tornado.template
 import json
 from collections import defaultdict
 from pkg_resources import resource_filename
+from datetime import datetime
 
 template_loader = tornado.template.Loader(resource_filename(__name__, 'resources'))
 
@@ -15,6 +16,7 @@ all_data = defaultdict(list)
 class DataEndpointHandler(tornado.web.RequestHandler):
     def post(self, series_name):
         data = json.loads(self.request.body)
+        data.update({'_datetime_submitted': datetime.now().isoformat()})
         all_data[series_name].append(data)
         self.finish()
 
@@ -28,9 +30,19 @@ class DataEndpointHandler(tornado.web.RequestHandler):
 
 class ChartEndpointHandler(tornado.web.RequestHandler):
     def get(self, series_name):
-        self.write(template_loader.load('chart.html').generate(gubby="the_gubby"))
+        try:
+            data = all_data[series_name]
+        except KeyError:
+            self.response_code = 404
+            return
+
+        self.write(
+            template_loader.load('chart.html').generate(
+                                                    data=data, 
+                                                    uri=self.request.path[:-len('chart')])
+        )
         self.finish()
-        
+       
 
 application = tornado.web.Application([
     (r'/([^/]+)', DataEndpointHandler),

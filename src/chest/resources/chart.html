@@ -1,9 +1,28 @@
 <?DOCTYPE html>
 <html>
     <head>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     </head>
     <body>
-        hello, world
-        {{ gubby }}
+        <div id="data_display"></div>
+
+        <script type="text/javascript">
+        _data_uri = "{{ uri }}";
+        _data = {% raw json_encode(data) %};
+        
+        date_points = array.map(_data, function(datum) { return datum._datetime_submitted; });
+/*
+        google.load("visualization", "1", {packages:["corechart"]});
+        function drawChart() {
+            data = google.visualization.arrayToDataTable([['datetime', 'x', 'y']].concat(_data));
+            var options = { title: 'Chart title' };
+            var chart = new google.visualization.LineChart(document.getElementById('data_display'));
+            chart.draw(data);
+        }
+        google.setOnLoadCallback(drawChart);
+*/
+ 
+        </script>
+
     </body>
 </html>
