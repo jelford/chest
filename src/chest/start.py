@@ -39,7 +39,8 @@ class ChartEndpointHandler(tornado.web.RequestHandler):
         self.write(
             template_loader.load('chart.html').generate(
                                                     data=data, 
-                                                    uri=self.request.path[:-len('chart')])
+                                                    uri=self.request.path[:-len('chart')],
+                                                    default_y=self.get_argument('plot_y', default='Date', strip=True))
         )
         self.finish()
        

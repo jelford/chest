@@ -60,6 +60,7 @@
         dimension_selector.addEventListener('change', function(event) {
             drawChart();
         });
+        dimension_selector.value = "{{ default_y }}"
         
         date_points = Array.map(_data, function(datum) { return datum._datetime_submitted; });
         google.load("visualization", "1", {packages:["corechart"]});
