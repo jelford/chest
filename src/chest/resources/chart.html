@@ -5,22 +5,66 @@
     </head>
     <body>
         <div id="data_display"></div>
+        <select id="dimension"></select>
 
         <script type="text/javascript">
         _data_uri = "{{ uri }}";
         _data = {% raw json_encode(data) %};
-        
-        date_points = array.map(_data, function(datum) { return datum._datetime_submitted; });
-/*
-        google.load("visualization", "1", {packages:["corechart"]});
+
+
+        var fields = ['_datetime_submitted'];
+
+        var data_transformed = [];
+
+        for (var point of _data) {
+            var point_transformed = [];
+            for (var dim in point) {
+                var position;
+                if ((position = fields.indexOf(dim)) < 0) {
+                    position = fields.push(dim);
+                }
+
+                point_transformed[position] = point[dim];
+            }
+  
+            var datetime_position = fields.indexOf('_datetime_submitted');
+
+            var datetime_submitted = new Date(Date.parse(point_transformed[datetime_position]));
+
+            console.log(point_transformed);
+            console.log(datetime_submitted, point_transformed[datetime_position]);
+
+            point_transformed[datetime_position] = datetime_submitted;
+            data_transformed.push(point_transformed);
+        }
+        {
+            var datetime_position = fields.indexOf('_datetime_submitted');
+            fields[datetime_position] = "Date";
+        }
+
         function drawChart() {
-            data = google.visualization.arrayToDataTable([['datetime', 'x', 'y']].concat(_data));
+            var interesting_dimension = document.getElementById('dimension').value;
+            data = google.visualization.arrayToDataTable([fields.slice(0,2)].concat(Array.map(data_transformed, function(p) { return [p[0], p[fields.indexOf(interesting_dimension)]]; })));
             var options = { title: 'Chart title' };
             var chart = new google.visualization.LineChart(document.getElementById('data_display'));
             chart.draw(data);
         }
+
+
+        var dimension_selector = document.getElementById('dimension');
+        for (var dim of fields) {
+            var option = document.createElement('option');
+            option.value = option.innerHTML = dim;
+            dimension_selector.appendChild(option);
+        }
+        dimension_selector.addEventListener('change', function(event) {
+            drawChart();
+        });
+        
+        date_points = Array.map(_data, function(datum) { return datum._datetime_submitted; });
+        google.load("visualization", "1", {packages:["corechart"]});
+        
         google.setOnLoadCallback(drawChart);
-*/
  
         </script>
 
