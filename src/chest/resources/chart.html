@@ -12,59 +12,73 @@
         _data = {% raw json_encode(data) %};
 
 
-        var fields = ['_datetime_submitted'];
+        function clean_data(raw_data) {
+            var fields = ['_datetime_submitted'];
 
-        var data_transformed = [];
+            var data_transformed = [];
 
-        for (var point of _data) {
-            var point_transformed = [];
-            for (var dim in point) {
-                var position;
-                if ((position = fields.indexOf(dim)) < 0) {
-                    position = fields.push(dim);
+            for (var point of _data) {
+                var point_transformed = [];
+                for (var dim in point) {
+                    var position;
+                    if ((position = fields.indexOf(dim)) < 0) {
+                        position = fields.push(dim);
+                    }
+
+                    point_transformed[position] = point[dim];
                 }
+      
+                var datetime_position = fields.indexOf('_datetime_submitted');
 
-                point_transformed[position] = point[dim];
+                var datetime_submitted = new Date(Date.parse(point_transformed[datetime_position]));
+
+                point_transformed[datetime_position] = datetime_submitted;
+                data_transformed.push(point_transformed);
             }
-  
-            var datetime_position = fields.indexOf('_datetime_submitted');
+            {
+                var datetime_position = fields.indexOf('_datetime_submitted');
+                fields[datetime_position] = "Date";
+            }
 
-            var datetime_submitted = new Date(Date.parse(point_transformed[datetime_position]));
-
-            console.log(point_transformed);
-            console.log(datetime_submitted, point_transformed[datetime_position]);
-
-            point_transformed[datetime_position] = datetime_submitted;
-            data_transformed.push(point_transformed);
+            return {
+                fields: fields,
+                data: data_transformed
+            };
         }
-        {
-            var datetime_position = fields.indexOf('_datetime_submitted');
-            fields[datetime_position] = "Date";
-        }
+    
+        var data_transformed = clean_data(_data);
 
         function drawChart() {
             var interesting_dimension = document.getElementById('dimension').value;
-            data = google.visualization.arrayToDataTable([fields.slice(0,2)].concat(Array.map(data_transformed, function(p) { return [p[0], p[fields.indexOf(interesting_dimension)]]; })));
+            data = google.visualization.arrayToDataTable(
+                        [data_transformed.fields.slice(0,2)].concat(
+                            Array.map(data_transformed.data, function(p) { 
+                                return [p[0], p[data_transformed.fields.indexOf(interesting_dimension)]]; 
+                            })
+                        )
+                    );
             var options = { title: 'Chart title' };
             var chart = new google.visualization.LineChart(document.getElementById('data_display'));
             chart.draw(data);
-        }
-
+        };
 
         var dimension_selector = document.getElementById('dimension');
-        for (var dim of fields) {
-            var option = document.createElement('option');
-            option.value = option.innerHTML = dim;
-            dimension_selector.appendChild(option);
+
+        function update_elements_in_option_selector(default_option, data_transformed) {
+            dimension_selector.innerHTML = '';
+            for (var dim of data_transformed.fields) {
+                var option = document.createElement('option');
+                option.value = option.innerHTML = dim;
+                dimension_selector.appendChild(option);
+            }
+            dimension_selector.value = default_option;
         }
+        update_elements_in_option_selector("{{ default_y }}", data_transformed);
         dimension_selector.addEventListener('change', function(event) {
             drawChart();
         });
-        dimension_selector.value = "{{ default_y }}"
         
-        date_points = Array.map(_data, function(datum) { return datum._datetime_submitted; });
         google.load("visualization", "1", {packages:["corechart"]});
-        
         google.setOnLoadCallback(drawChart);
  
         </script>
